@@ -1,12 +1,18 @@
 import * as React from 'react';
-import { DashboardLayout } from "./views/DashboardLayout";
-import { OrchestrationView } from "./views/OrchestrationView";
-import Header from "./components/Header";
-import { useCentralController } from "./hooks/useCentralController";
-import AuditPanel from "./components/AuditPanel";
-import { ControllerProvider } from "./contexts/ControllerContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { PdfViewer } from "./components/PdfViewer";
+
+// Views
+import DashboardLayout from "./views/DashboardLayout";
+import OrchestrationView from "./views/OrchestrationView";
+
+// Components
+import Header from "./components/header";
+import AuditPanel from "./components/audit-panel";
+import { PdfViewer } from "./components/pdf-viewer";
+
+// Hooks & Context
+import { useCentralController } from "./hooks/use-central-controller";
+import { ControllerProvider } from "./contexts/controller-context";
 
 const App = () => {
   return (

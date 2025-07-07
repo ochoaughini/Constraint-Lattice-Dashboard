@@ -1,4 +1,7 @@
-// === CORE ARCHITECTURE ===
+// Core types
+export type Domain = 'Varkiel' | 'Lattice' | 'WildCore' | 'Other';
+export type QualitativeStrength = 'Low' | 'Balanced' | 'High';
+export type DocumentFrameworkId = 'constitution' | 'acls' | 'bitcoin';
 
 export const GovernanceLayer = {
   STRUCTURAL: 'Structural',
@@ -7,9 +10,9 @@ export const GovernanceLayer = {
   SECURITY: 'Security',
 } as const;
 
-export type GovernanceLayer = typeof GovernanceLayer[keyof typeof GovernanceLayer];
+export type GovernanceLayerType = keyof typeof GovernanceLayer;
 
-export const ENGINE_NAMES: Record<string, string> = {
+export const ENGINE_NAMES = {
   [GovernanceLayer.STRUCTURAL]: 'Constraint Lattice',
   [GovernanceLayer.SYMBOLIC]: 'Varkiel',
   [GovernanceLayer.PHENOMENOLOGICAL]: 'Varkiel',
@@ -20,17 +23,9 @@ export const ENGINE_NAMES: Record<string, string> = {
   'Constitution': 'Constitution',
   'Bitcoin': 'Bitcoin',
   'ACLS': 'ACLS',
-};
+} as const;
 
-export type Domain = 'Varkiel' | 'Lattice' | 'WildCore';
-export type QualitativeStrength = 'Low' | 'Balanced' | 'High';
-export const QUALITATIVE_STRENGTHS: QualitativeStrength[] = ['Low', 'Balanced', 'High'];
-
-export type RuleID = string | number; // updated type definition
-
-// === DOCUMENT FRAMEWORKS ===
-
-export type DocumentFrameworkId = 'constitution' | 'acls' | 'bitcoin';
+export type EngineName = keyof typeof ENGINE_NAMES;
 
 export interface DocumentFramework {
   id: DocumentFrameworkId;
@@ -45,17 +40,15 @@ export interface DocumentFramework {
   rules: readonly GovernanceRule[];
 }
 
-// === GOVERNANCE RULES & CONFIG ===
-
 export interface GovernanceRule {
-  readonly id: RuleID;
+  readonly id: string | number;
   readonly name: string;
   readonly description: string;
-  readonly layer: GovernanceLayer;
+  readonly layer: GovernanceLayerType;
 }
 
 export interface StructuralConfig {
-  activeRules: Set<RuleID>;
+  activeRules: Set<string | number>;
 }
 
 export interface SymbolicConfig {
@@ -74,59 +67,20 @@ export interface SecurityConfig {
 }
 
 export interface GovernanceConfig {
-  [key: string]: any;
   [GovernanceLayer.STRUCTURAL]: StructuralConfig;
   [GovernanceLayer.SYMBOLIC]: SymbolicConfig;
   [GovernanceLayer.PHENOMENOLOGICAL]: PhenomenologicalConfig;
   [GovernanceLayer.SECURITY]: SecurityConfig;
 }
 
-// === VISUALIZATION & LOGGING ===
-
-export interface GraphNode {
-  id: string;
-  label: string;
-  group: string;
-  strength: number;
-  x?: number;
-  y?: number;
-  fx?: number;
-  fy?: number;
-}
-
-export interface GraphLink {
-  source: string;
-  target: string;
-  value: number;
-}
-
-export interface AffectiveDataPoint {
-  id: string;
-  time: number;
-  value: number;
-}
-
 export interface PipelineLogEntry {
   id: string;
-  timestamp: string;
+  timestamp: Date;
   timeOffset: number;
-  module: keyof typeof ENGINE_NAMES;
+  module: EngineName;
   event: string;
   details: string;
   metadata?: Record<string, any>;
-}
-
-// === OUTPUT & INTROSPECTION ===
-
-export interface HighlightedOutput {
-  text: string;
-  highlight: string;
-}
-
-export interface Contributor {
-  id: string;
-  name: string;
-  contribution: string;
 }
 
 export interface IntrospectionReport {
@@ -135,11 +89,21 @@ export interface IntrospectionReport {
   timestamp: string;
   strengths: string[];
   weaknesses: string[];
-  contributors: Contributor[];
+  contributors: Array<{ id: string; name: string; contribution: string }>;
   summary: string;
 }
 
-// === CONTROLLER STATE & EVENTS ===
+export const QUALITATIVE_STRENGTHS: QualitativeStrength[] = ['Low', 'Balanced', 'High'];
+
+export interface HighlightedOutput {
+  text: string;
+  highlight: string;
+  type?: string;
+}
+
+export interface AffectiveDataPoint {
+  // Define properties as needed
+}
 
 export interface AppState {
   activeFramework: DocumentFramework | null;
@@ -148,26 +112,28 @@ export interface AppState {
   prompt: string;
   finalOutput: string | HighlightedOutput;
   config: GovernanceConfig;
-  isConstitutionalModeActive: boolean; // Retained for specific logic if needed
+  isConstitutionalModeActive: boolean;
   logs: PipelineLogEntry[];
-  graphData: { nodes: GraphNode[], links: GraphLink[] };
+  graphData: { nodes: any[]; links: any[] };
+  nodes: any[];
+  links: any[];
   affectiveData: AffectiveDataPoint[];
   introspectionReport: IntrospectionReport | null;
   isLoading: boolean;
   error: string | null;
 }
 
-export interface ControllerEvent {
-  type: string;
-  payload?: any;
-}
+export type ControllerEvent = 'STATE_UPDATE' | 'LOG_ADDED';
 
-export type ControllerAction =
+export type ControllerAction = 
+  | { type: 'SET_FRAMEWORK'; payload: DocumentFramework }
+  | { type: 'ADD_LOG'; payload: PipelineLogEntry }
+  | { type: 'SET_REPORT'; payload: IntrospectionReport }
   | { type: 'LOAD_DOCUMENT'; payload: DocumentFrameworkId }
   | { type: 'RESET_FRAMEWORK' }
   | { type: 'SET_PROMPT'; payload: string }
   | { type: 'SET_DOMAIN'; payload: Domain }
-  | { type: 'UPDATE_CONFIG'; payload: { layer: GovernanceLayer, newConfig: Partial<any> } }
+  | { type: 'UPDATE_CONFIG'; payload: { layer: GovernanceLayerType; newConfig: any } }
   | { type: 'APPLY_LATTICE_SPEC'; payload: any }
   | { type: 'EXECUTE_NARRATIVE'; payload: string }
   | { type: 'EXECUTE_BREACH_SIM'; payload: string };

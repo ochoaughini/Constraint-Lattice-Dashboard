@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useMemo } from 'react';
-import { CentralControllerService } from '../services/centralControllerService';
+import { CentralControllerService } from '../services/central-controller-service';
 
 export const ControllerContext = createContext<CentralControllerService | null>(null);
 
