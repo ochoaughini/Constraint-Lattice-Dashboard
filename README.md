@@ -50,6 +50,19 @@ A modern, high-performance dashboard built with React, TypeScript, and Vite, fea
 - `npm run type-check` - Check TypeScript types
 - `npm run analyze` - Analyze bundle size
 
+### Testing
+
+The dashboard itself does not include JavaScript unit tests by default. The
+autonomous agents live in a separate directory and use Python-based tests. To
+execute those suites, run the helper script defined in **AGENTS.md**:
+
+```bash
+npm run test:agents
+```
+
+Running `npm test` will simply invoke `vitest` and may report "No test files
+found" unless you have added your own tests.
+
 ## Project Structure
 
 ```mermaid
