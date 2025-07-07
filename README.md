@@ -54,7 +54,7 @@ A modern, high-performance dashboard built with React, TypeScript, and Vite, fea
 
 The dashboard itself does not include JavaScript unit tests by default. The
 autonomous agents live in a separate directory and use Python-based tests. To
-execute those suites, run the helper script defined in **AGENTS.md**:
+execute those suites, ensure you have Python and `pytest` available, then run the helper script defined in **AGENTS.md**:
 
 ```bash
 npm run test:agents
