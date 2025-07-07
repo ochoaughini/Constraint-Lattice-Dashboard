@@ -5,7 +5,7 @@ import { GithubIcon } from './icons';
 const Header: React.FC = () => {
   return (
     <header className="bg-background/80 backdrop-blur-sm border-b border-ui-primary sticky top-0 z-50">
-      <div className="max-w-viewport mx-auto px-8">
+      <div className="max-w-viewport mx-auto px-4 sm:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
             <span className="text-lg font-semibold tracking-tight text-text-primary">

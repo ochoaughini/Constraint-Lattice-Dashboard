@@ -17,7 +17,7 @@ export const FrameworkCard: React.FC<FrameworkCardProps> = ({ framework, onSelec
   return (
     <motion.button
       onClick={onSelect}
-      className="bg-ui-primary rounded-lg border border-white/10 overflow-hidden text-left flex flex-col group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan"
+      className="bg-ui-primary rounded-lg border border-white/10 overflow-hidden text-left flex flex-col h-full group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan"
       whileHover={{ y: -5, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)' }}
       transition={{ type: 'spring', stiffness: 300 }}
     >

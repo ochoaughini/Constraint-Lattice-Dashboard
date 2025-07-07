@@ -78,7 +78,7 @@ export const PdfViewer: React.FC<PdfViewerProps> = ({ framework }) => {
                 ref={imageRef}
                 src={pagePath}
                 alt={`${framework.title} page ${currentPage}`}
-                className="max-w-none h-auto shadow-lg"
+                className="max-w-full h-auto shadow-lg"
                 style={{ scale: zoom }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

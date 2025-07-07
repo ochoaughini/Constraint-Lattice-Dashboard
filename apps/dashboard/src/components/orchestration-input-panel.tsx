@@ -29,7 +29,7 @@ export const OrchestrationInputPanel: React.FC<OrchestrationInputPanelProps> = (
                 disabled={isLoading}
                 aria-label="Prompt Input"
             />
-            <div className="flex items-center justify-end space-x-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
                  {error && <p className="text-red-400 text-sm text-center flex-1">{error}</p>}
                 <motion.button
                     type="submit"
