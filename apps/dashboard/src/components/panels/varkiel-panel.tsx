@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import type { AppState, ControllerAction, QualitativeStrength } from '../../types';
@@ -28,7 +27,7 @@ export const VarkielPanel: React.FC<{ state: AppState; dispatch: React.Dispatch<
                     <div>
                         <label className="text-sm font-medium text-text-primary mb-2 block">Coherence Strength</label>
                         <div className="flex items-center bg-background p-1 rounded-lg border border-white/10 w-full">
-                            {QUALITATIVE_STRENGTHS.map(option => (
+                            {QUALITATIVE_STRENGTHS.map((option: QualitativeStrength) => (
                                 <motion.button
                                     key={option}
                                     onClick={() => onSymbolicConfigChange({ coherenceStrength: option })}
@@ -61,7 +60,7 @@ export const VarkielPanel: React.FC<{ state: AppState; dispatch: React.Dispatch<
                     <div>
                         <label className="text-sm font-medium text-text-primary mb-2 block">Affective Congruence Target</label>
                          <div className="flex items-center bg-background p-1 rounded-lg border border-white/10 w-full">
-                            {QUALITATIVE_STRENGTHS.map(option => (
+                            {QUALITATIVE_STRENGTHS.map((option: QualitativeStrength) => (
                                 <motion.button
                                     key={option}
                                     onClick={() => onPhenoConfigChange({ affectiveCongruenceTarget: option })}

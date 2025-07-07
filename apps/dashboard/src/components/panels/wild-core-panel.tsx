@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { AppState, ControllerAction, QualitativeStrength } from '../../types';
 import { GovernanceLayer, QUALITATIVE_STRENGTHS } from '../../types';
