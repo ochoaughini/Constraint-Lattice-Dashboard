@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useRef } from 'react';
 
 interface AffectiveState {
   name: string;
@@ -21,12 +21,19 @@ export const AffectiveProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [data, setData] = useState<AffectiveState[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectAttempt = useRef(0);
+  const maxReconnectAttempts = 5;
 
-  useEffect(() => {
-    const ws = new WebSocket('wss://your-websocket-endpoint');
+  const connectWebSocket = () => {
+    // REPLACE WITH YOUR ACTUAL WEBSOCKET ENDPOINT
+    const ws = new WebSocket('wss://your-actual-production-websocket-endpoint');
 
     ws.onopen = () => {
+      console.log('WebSocket connected');
+      setError(null);
       setLoading(false);
+      reconnectAttempt.current = 0; // Reset reconnect attempts
     };
 
     ws.onmessage = (event) => {
@@ -34,21 +41,42 @@ export const AffectiveProvider: React.FC<{ children: ReactNode }> = ({ children 
         const newData: AffectiveState[] = JSON.parse(event.data);
         setData(newData);
       } catch (err) {
-        setError('Error parsing data');
+        setError('Error parsing WebSocket data');
       }
     };
 
-    ws.onerror = (err) => {
-      setError('WebSocket error');
-      setLoading(false);
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      setError('WebSocket connection error');
     };
 
-    ws.onclose = () => {
+    ws.onclose = (event) => {
+      console.log('WebSocket closed:', event.reason);
       setLoading(false);
+      
+      if (reconnectAttempt.current < maxReconnectAttempts) {
+        const delay = Math.min(1000 * 2 ** reconnectAttempt.current, 30000);
+        reconnectAttempt.current++;
+        
+        setTimeout(() => {
+          console.log(`Reconnecting... attempt ${reconnectAttempt.current}`);
+          connectWebSocket();
+        }, delay);
+      } else {
+        setError('Failed to establish WebSocket connection after multiple attempts');
+      }
     };
 
+    wsRef.current = ws;
+  };
+
+  useEffect(() => {
+    connectWebSocket();
+    
     return () => {
-      ws.close();
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
     };
   }, []);
 

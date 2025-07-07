@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { AffectiveProvider } from './contexts/AffectiveContext';
+import { ErrorBoundary } from 'react-error-boundary';
 
 // Views
 import DashboardLayout from "./views/DashboardLayout";
@@ -8,7 +9,6 @@ import OrchestrationView from "./views/OrchestrationView";
 
 // Components
 import Header from "./components/header";
-import Footer from './components/Footer';
 import AuditPanel from "./components/AuditPanel";
 import FrameworkPdfViewer from './components/panels/PdfViewer';
 
@@ -19,13 +19,25 @@ import { ControllerProvider } from "./contexts/controller-context";
 // Types
 import { DocumentFrameworkId } from './types';
 
+function ErrorFallback({ error, resetErrorBoundary }: any) {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
+  );
+}
+
 const App = () => {
   return (
-    <AffectiveProvider>
-      <ControllerProvider>
-        <AppContent />
-      </ControllerProvider>
-    </AffectiveProvider>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <AffectiveProvider>
+        <ControllerProvider>
+          <AppContent />
+        </ControllerProvider>
+      </AffectiveProvider>
+    </ErrorBoundary>
   );
 };
 
