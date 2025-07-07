@@ -21,7 +21,8 @@
     "prepare": "husky install",
     "test": "vitest",
     "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:agents": "pytest -q"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
