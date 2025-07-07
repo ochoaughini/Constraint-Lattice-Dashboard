@@ -7,12 +7,16 @@ import OrchestrationView from "./views/OrchestrationView";
 
 // Components
 import Header from "./components/header";
+import Footer from './components/Footer';
 import AuditPanel from "./components/audit-panel";
-import { PdfViewer } from "./components/pdf-viewer";
+import FrameworkPdfViewer from './components/panels/PdfViewer';
 
 // Hooks & Context
 import { useCentralController } from "./hooks/use-central-controller";
 import { ControllerProvider } from "./contexts/controller-context";
+
+// Types
+import { DocumentFrameworkId } from './types';
 
 const App = () => {
   return (
@@ -41,7 +45,9 @@ const AppContent = () => {
               transition={{ duration: 0.3, ease: 'easeInOut' }}
             >
               <div className="h-full sticky top-24">
-                <PdfViewer framework={state.activeFramework} />
+                {state.activeFramework && (
+                  <FrameworkPdfViewer framework={state.activeFramework} />
+                )}
               </div>
             </motion.aside>
           )}

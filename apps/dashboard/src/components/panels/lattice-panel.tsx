@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import type { AppState, ControllerAction, RuleID } from '../../types';
 import { GovernanceLayer } from '../../types';
-import Card from '../ui/Card';
+import Card from '../ui/card';
 import { FileJsonIcon } from '../icons';
 import { JsonEditor } from '../ui/JsonEditor';
 import { motion } from 'framer-motion';

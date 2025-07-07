@@ -4,55 +4,60 @@ export interface AppState {
   logs: PipelineLogEntry[];
   introspectionReport?: IntrospectionReport;
   affectiveData: AffectiveDataPoint[];
-  config: any; 
-  finalOutput: string | { text: string; highlight?: string };
+  config: GovernanceConfig; 
+  graphData: { nodes: any[]; links: any[] }; 
+  nodes: any[];
+  links: any[];
+  finalOutput: string;
   error: string | null;
   isLoading: boolean;
+  prompt: string;
+  activeDomain: string;
+  wizardStep: number;
 }
 
-export type ControllerAction = {
-  type: 'SET_FRAMEWORK';
-  payload: DocumentFrameworkId;
-} | {
-  type: 'ADD_LOG';
-  payload: PipelineLogEntry;
-} | {
-  type: 'SET_REPORT';
-  payload: IntrospectionReport;
-};
+export type ControllerAction = 
+  | { type: 'SET_FRAMEWORK'; payload: DocumentFrameworkId }
+  | { type: 'ADD_LOG'; payload: PipelineLogEntry }
+  | { type: 'SET_REPORT'; payload: IntrospectionReport }
+  | { type: 'UPDATE_CONFIG'; payload: { layer: GovernanceLayerValue; newConfig: any } }
+  | { type: 'EXECUTE_BREACH_SIM'; payload: string }
+  | { type: 'LOAD_DOCUMENT' }
+  | { type: 'RESET_FRAMEWORK' }
+  | { type: 'SET_PROMPT'; payload: string }
+  | { type: 'SET_DOMAIN'; payload: any }
+  | { type: 'EXECUTE_NARRATIVE'; payload: string }
+  | { type: 'APPLY_LATTICE_SPEC'; payload: any };
 
 export type ControllerEvent = 'STATE_UPDATE';
 
-export type QualitativeStrength = 'weak' | 'moderate' | 'strong';
+export const QualitativeStrength = {
+  WEAK: 'weak',
+  MEDIUM: 'medium',
+  STRONG: 'strong',
+} as const;
+
+export type QualitativeStrengthValue = (typeof QualitativeStrength)[keyof typeof QualitativeStrength];
 
 export type RuleID = string;
 
-export type DocumentFrameworkId = string;
+export type DocumentFrameworkId = 'constitution' | 'acls' | 'bitcoin';
 
 export interface IntrospectionReport {
   id: string;
-  timestamp: Date;
   framework: DocumentFrameworkId;
+  timestamp: string;
+  strengths: string[];
+  weaknesses: string[];
+  contributors: Array<{ id: string; name: string; contribution: string }>;
   summary: string;
-  strengths: {
-    rule: RuleID;
-    strength: QualitativeStrength;
-    explanation: string;
-  }[];
-  weaknesses: {
-    rule: RuleID;
-    explanation: string;
-  }[];
-  contributors: {
-    id: string;
-    name: string;
-    contribution: string;
-  }[];
 }
 
 export interface PipelineLogEntry {
+  id: string;
   timestamp: Date;
-  module: string;
+  timeOffset: number;
+  module: EngineName;
   event: string;
   details: string;
   metadata?: Record<string, any>;
@@ -80,8 +85,79 @@ export interface GovernanceLayer {
 }
 
 export interface GovernanceRule {
-  id: RuleID;
+  readonly id: string | number;
+  readonly name: string;
+  readonly description: string;
+  readonly layer: GovernanceLayerType;
+}
+
+export const GovernanceLayer = {
+  STRUCTURAL: 'Structural',
+  SYMBOLIC: 'Symbolic',
+  PHENOMENOLOGICAL: 'Phenomenological',
+  SECURITY: 'Security',
+} as const;
+
+export type GovernanceLayerKey = keyof typeof GovernanceLayer;
+export type GovernanceLayerValue = typeof GovernanceLayer[GovernanceLayerKey];
+export type GovernanceLayerType = GovernanceLayerValue;
+
+export const ENGINE_NAMES = {
+  [GovernanceLayer.STRUCTURAL]: 'Constraint Lattice',
+  [GovernanceLayer.SYMBOLIC]: 'Varkiel',
+  [GovernanceLayer.PHENOMENOLOGICAL]: 'Varkiel',
+  [GovernanceLayer.SECURITY]: 'WildCore',
+  'LLM': 'LLM',
+  'System': 'System',
+  'User': 'User',
+  'Constitution': 'Constitution',
+  'Bitcoin': 'Bitcoin',
+  'ACLS': 'ACLS',
+} as const;
+
+export type EngineName = keyof typeof ENGINE_NAMES;
+
+export interface DocumentFramework {
+  id: DocumentFrameworkId;
   title: string;
+  source: string;
   description: string;
-  strength: QualitativeStrength;
+  thumbnail: string;
+  filePath: string;
+  totalPages: number;
+  toc: Array<{ title: string; page: number }>;
+  samplePrompts: Array<{ id: string; text: string }>;
+  rules: readonly GovernanceRule[];
+}
+
+export interface StructuralConfig {
+  activeRules: Set<string | number>;
+}
+
+export interface SymbolicConfig {
+  coherenceStrength: QualitativeStrengthValue;
+  archetypeProjection: boolean;
+}
+
+export interface PhenomenologicalConfig {
+  affectiveCongruenceTarget: QualitativeStrengthValue;
+  resonanceTracking: boolean;
+}
+
+export interface SecurityConfig {
+  injectionSensitivity: QualitativeStrengthValue;
+  simulationEnabled: boolean;
+}
+
+export interface GovernanceConfig {
+  [GovernanceLayer.STRUCTURAL]: StructuralConfig;
+  [GovernanceLayer.SYMBOLIC]: SymbolicConfig;
+  [GovernanceLayer.PHENOMENOLOGICAL]: PhenomenologicalConfig;
+  [GovernanceLayer.SECURITY]: SecurityConfig;
+}
+
+export interface HighlightedOutput {
+  text: string;
+  highlight: string;
+  type?: string;
 }

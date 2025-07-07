@@ -5,20 +5,22 @@ import {
   ControllerEvent,
   ENGINE_NAMES,
   EngineName,
-  GovernanceConfig,
   GovernanceLayerType,
   GovernanceLayer,
   DocumentFramework,
-  Domain,
   PipelineLogEntry,
   IntrospectionReport,
-} from '../types/types';
+  RuleID
+} from '../types';
 
 // Define core types locally to avoid import issues
-// type Domain = 'Varkiel' | 'Lattice' | 'WildCore' | 'Other';
-// type QualitativeStrength = 'Low' | 'Balanced' | 'High';
-// type RuleID = string | number;
-// type DocumentFrameworkId = 'constitution' | 'acls' | 'bitcoin';
+export const QualitativeStrength = {
+  WEAK: 'weak',
+  MEDIUM: 'medium',
+  STRONG: 'strong',
+} as const;
+
+export type QualitativeStrengthValue = (typeof QualitativeStrength)[keyof typeof QualitativeStrength];
 
 // Define governance layer constants
 // const GovernanceLayer = {
@@ -69,31 +71,31 @@ import {
 // }
 
 // Define configuration interfaces
-// interface StructuralConfig {
-//   activeRules: Set<RuleID>;
-// }
+interface StructuralConfig {
+  activeRules: Set<RuleID>;
+}
 
-// interface SymbolicConfig {
-//   coherenceStrength: QualitativeStrength;
-//   archetypeProjection: boolean;
-// }
+interface SymbolicConfig {
+  coherenceStrength: QualitativeStrengthValue;
+  archetypeProjection: boolean;
+}
 
-// interface PhenomenologicalConfig {
-//   affectiveCongruenceTarget: QualitativeStrength;
-//   resonanceTracking: boolean;
-// }
+interface PhenomenologicalConfig {
+  affectiveCongruenceTarget: QualitativeStrengthValue;
+  resonanceTracking: boolean;
+}
 
-// interface SecurityConfig {
-//   injectionSensitivity: QualitativeStrength;
-//   simulationEnabled: boolean;
-// }
+interface SecurityConfig {
+  injectionSensitivity: QualitativeStrengthValue;
+  simulationEnabled: boolean;
+}
 
-// interface GovernanceConfig {
-//   [GovernanceLayer.STRUCTURAL]: StructuralConfig;
-//   [GovernanceLayer.SYMBOLIC]: SymbolicConfig;
-//   [GovernanceLayer.PHENOMENOLOGICAL]: PhenomenologicalConfig;
-//   [GovernanceLayer.SECURITY]: SecurityConfig;
-// }
+interface GovernanceConfig {
+  [GovernanceLayer.STRUCTURAL]: StructuralConfig;
+  [GovernanceLayer.SYMBOLIC]: SymbolicConfig;
+  [GovernanceLayer.PHENOMENOLOGICAL]: PhenomenologicalConfig;
+  [GovernanceLayer.SECURITY]: SecurityConfig;
+}
 
 // Define pipeline log entry
 // interface PipelineLogEntry {
@@ -125,7 +127,6 @@ import {
 //   prompt: string;
 //   finalOutput: string | { text: string; highlight: string; type?: string };
 //   config: GovernanceConfig;
-//   isConstitutionalModeActive: boolean;
 //   logs: PipelineLogEntry[];
 //   graphData: { nodes: any[]; links: any[] };
 //   nodes: any[];
@@ -152,35 +153,34 @@ import {
 
 // Helper function to create a fresh initial state
 const getFreshInitialState = (): AppState => ({
-  activeFramework: null,
-  wizardStep: 1,
-  activeDomain: 'Lattice',
-  prompt: 'Write a brief, informal email to a colleague, John, asking for the latest sales figures for Q3.',
-  finalOutput: '',
+  prompt: '',
+  activeFramework: undefined,
+  activeDomain: '',
+  wizardStep: 0,
   config: {
-    [GovernanceLayer.STRUCTURAL]: { activeRules: new Set<RuleID>() },
+    [GovernanceLayer.STRUCTURAL]: { activeRules: new Set() },
     [GovernanceLayer.SYMBOLIC]: { 
-      coherenceStrength: 'Balanced', 
-      archetypeProjection: true 
+      coherenceStrength: QualitativeStrength.WEAK, 
+      archetypeProjection: false 
     },
     [GovernanceLayer.PHENOMENOLOGICAL]: { 
-      affectiveCongruenceTarget: 'Balanced', 
-      resonanceTracking: true 
+      affectiveCongruenceTarget: QualitativeStrength.WEAK, 
+      resonanceTracking: false 
     },
     [GovernanceLayer.SECURITY]: { 
-      injectionSensitivity: 'High', 
-      simulationEnabled: true 
-    }
+      injectionSensitivity: QualitativeStrength.WEAK, 
+      simulationEnabled: false 
+    },
   },
-  isConstitutionalModeActive: false,
+  introspectionReport: undefined,
   logs: [],
   graphData: { nodes: [], links: [] },
   nodes: [],
   links: [],
   affectiveData: [],
-  introspectionReport: null,
   isLoading: false,
-  error: null
+  error: null,
+  finalOutput: '',
 });
 
 type StateListener = (state: AppState) => void;
@@ -237,11 +237,20 @@ export class CentralControllerService {
   private reduce(state: AppState, action: ControllerAction): AppState {
     switch (action.type) {
       case 'SET_FRAMEWORK':
-        return { ...state, activeFramework: action.payload };
+        return {
+          ...state,
+          activeFramework: action.payload,
+        };
       case 'ADD_LOG':
-        return { ...state, logs: [action.payload, ...state.logs].slice(0, 1000) };
+        return {
+          ...state,
+          logs: [...state.logs, action.payload],
+        };
       case 'SET_REPORT':
-        return { ...state, introspectionReport: action.payload };
+        return {
+          ...state,
+          introspectionReport: action.payload,
+        };
       case 'LOAD_DOCUMENT':
         // Handle document loading logic here
         return state;
@@ -256,11 +265,13 @@ export class CentralControllerService {
           ...state,
           config: {
             ...state.config,
-            [action.payload.layer]: {
-              ...state.config[action.payload.layer as keyof GovernanceConfig],
-              ...action.payload.newConfig
-            }
-          }
+            [action.payload.layer]: action.payload.newConfig,
+          },
+        };
+      case 'EXECUTE_BREACH_SIM':
+        return {
+          ...state,
+          isLoading: true,
         };
       default:
         return state;

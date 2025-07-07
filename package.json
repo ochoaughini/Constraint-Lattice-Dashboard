@@ -2,6 +2,9 @@
   "name": "constraint-lattice",
   "private": true,
   "version": "1.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
   "type": "module",
   "scripts": {
     "dev": "npx vite --port 3001",

@@ -1,6 +1,5 @@
-
 import React from 'react';
-import Card from './ui/Card';
+import Card from './ui/card';
 import { SpinnerIcon, WandIcon } from './icons';
 import type { HighlightedOutput, IntrospectionReport, AffectiveDataPoint } from '../types';
 import AffectiveChart from './charts/AffectiveChart';

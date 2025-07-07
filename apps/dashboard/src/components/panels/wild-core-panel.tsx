@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import type { AppState, ControllerAction, QualitativeStrength } from '../../types';
-import { GovernanceLayer, QUALITATIVE_STRENGTHS } from '../../types';
-import Card from '../ui/Card';
-import Toggle from '../ui/Toggle';
+import { AppState, ControllerAction, GovernanceLayer, QualitativeStrength, QualitativeStrengthValue, SecurityConfig } from '../../types';
+import Card from '../ui/card';
+import Toggle from '../ui/toggle';
 import { motion } from 'framer-motion';
 
 export const WildCorePanel: React.FC<{ state: AppState; dispatch: React.Dispatch<ControllerAction> }> = ({ state, dispatch }) => {
@@ -14,8 +13,12 @@ export const WildCorePanel: React.FC<{ state: AppState; dispatch: React.Dispatch
         }
     };
 
-    const onConfigChange = (newConfig: Partial<AppState['config']['Security']>) => {
+    const onConfigChange = (newConfig: Partial<SecurityConfig>) => {
         dispatch({ type: 'UPDATE_CONFIG', payload: { layer: GovernanceLayer.SECURITY, newConfig }});
+    }
+
+    const handleOptionChange = (option: QualitativeStrengthValue) => {
+        onConfigChange({ injectionSensitivity: option });
     }
 
   return (
@@ -34,10 +37,10 @@ export const WildCorePanel: React.FC<{ state: AppState; dispatch: React.Dispatch
         <div>
             <label className="text-sm font-medium text-text-primary mb-2 block">Injection Detection Sensitivity</label>
             <div className="flex items-center bg-background p-1 rounded-lg border border-white/10 w-full">
-                {QUALITATIVE_STRENGTHS.map(option => (
+                {Object.values(QualitativeStrength).map(option => (
                     <motion.button
                         key={option}
-                        onClick={() => onConfigChange({ injectionSensitivity: option })}
+                        onClick={() => handleOptionChange(option)}
                         className={`relative flex-1 px-3 py-1.5 rounded-md text-sm font-semibold transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 ring-accent-cyan`}
                     >
                         {state.config.Security.injectionSensitivity === option && (

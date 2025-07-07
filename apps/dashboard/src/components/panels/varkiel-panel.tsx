@@ -1,19 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import type { AppState, ControllerAction, QualitativeStrength } from '../../types';
-import { GovernanceLayer, QUALITATIVE_STRENGTHS } from '../../types';
-import Card from '../ui/Card';
-import Toggle from '../ui/Toggle';
+import { AppState, ControllerAction, GovernanceLayer, QualitativeStrength, QualitativeStrengthValue, SymbolicConfig, PhenomenologicalConfig } from '../../types';
+import Card from '../ui/card';
+import Toggle from '../ui/toggle';
 import ConceptualGraph from '../charts/ConceptualGraph';
 import AffectiveChart from '../charts/AffectiveChart';
 
 export const VarkielPanel: React.FC<{ state: AppState; dispatch: React.Dispatch<ControllerAction> }> = ({ state, dispatch }) => {
     
-    const onSymbolicConfigChange = (newConfig: Partial<AppState['config']['Symbolic']>) => {
+    const onSymbolicConfigChange = (newConfig: Partial<SymbolicConfig>) => {
         dispatch({ type: 'UPDATE_CONFIG', payload: { layer: GovernanceLayer.SYMBOLIC, newConfig } });
     }
 
-    const onPhenoConfigChange = (newConfig: Partial<AppState['config']['Phenomenological']>) => {
+    const onPhenoConfigChange = (newConfig: Partial<PhenomenologicalConfig>) => {
         dispatch({ type: 'UPDATE_CONFIG', payload: { layer: GovernanceLayer.PHENOMENOLOGICAL, newConfig } });
     }
     
@@ -27,7 +26,7 @@ export const VarkielPanel: React.FC<{ state: AppState; dispatch: React.Dispatch<
                     <div>
                         <label className="text-sm font-medium text-text-primary mb-2 block">Coherence Strength</label>
                         <div className="flex items-center bg-background p-1 rounded-lg border border-white/10 w-full">
-                            {QUALITATIVE_STRENGTHS.map((option: QualitativeStrength) => (
+                            {Object.values(QualitativeStrength).map((option: QualitativeStrengthValue) => (
                                 <motion.button
                                     key={option}
                                     onClick={() => onSymbolicConfigChange({ coherenceStrength: option })}
@@ -60,7 +59,7 @@ export const VarkielPanel: React.FC<{ state: AppState; dispatch: React.Dispatch<
                     <div>
                         <label className="text-sm font-medium text-text-primary mb-2 block">Affective Congruence Target</label>
                          <div className="flex items-center bg-background p-1 rounded-lg border border-white/10 w-full">
-                            {QUALITATIVE_STRENGTHS.map((option: QualitativeStrength) => (
+                            {Object.values(QualitativeStrength).map((option: QualitativeStrengthValue) => (
                                 <motion.button
                                     key={option}
                                     onClick={() => onPhenoConfigChange({ affectiveCongruenceTarget: option })}

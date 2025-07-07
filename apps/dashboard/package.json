@@ -1,5 +1,5 @@
 {
-  "name": "triple-c-dashboard-new",
+  "name": "dashboard",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -30,6 +30,7 @@
     "globals": "^16.2.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
-    "vite": "^7.0.2"
+    "vite": "^7.0.2",
+    "vite-tsconfig-paths": "^5.0.0"
   }
 }
