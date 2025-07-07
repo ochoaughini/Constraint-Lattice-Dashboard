@@ -16,7 +16,7 @@ const DOMAINS: { id: Domain; name: string }[] = [
 
 export const NavigationBar: React.FC<NavigationBarProps> = ({ activeDomain, onActiveDomainChange }) => {
     return (
-        <div className="border-b border-ui-primary flex items-center space-x-8" role="tablist">
+        <div className="border-b border-ui-primary flex flex-wrap items-center space-x-8 overflow-x-auto px-2" role="tablist">
             {DOMAINS.map(domain => {
                 const isSelected = activeDomain === domain.id;
                 return (

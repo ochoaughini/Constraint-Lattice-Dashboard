@@ -95,7 +95,7 @@ const AuditPanel: React.FC<{ logs: PipelineLogEntry[] }> = ({ logs }) => {
         ) : (
           <List
             ref={listRef}
-            height={800} // This should be dynamic based on parent
+            height={600}
             itemCount={logs.length}
             itemSize={60} // Average item height. Items can be expanded.
             width="100%"

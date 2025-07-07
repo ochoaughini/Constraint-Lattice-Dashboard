@@ -12,7 +12,7 @@ interface DocumentSelectionPanelProps {
 
 export const DocumentSelectionPanel: React.FC<DocumentSelectionPanelProps> = ({ dispatch }) => {
   return (
-    <div className="flex flex-col min-h-full">
+    <div className="flex flex-col min-h-screen px-4 space-y-8">
       <IntroHeader activeFramework={null} dispatch={dispatch} />
       <div className="flex-grow text-center py-16">
         <h2 className="text-2xl font-semibold text-text-primary tracking-tight">Select a Constraint Framework</h2>

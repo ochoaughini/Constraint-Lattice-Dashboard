@@ -15,7 +15,7 @@ const steps = [
 
 export const WizardIndicator: React.FC<WizardIndicatorProps> = ({ currentStep }) => {
   return (
-    <div className="flex items-center justify-between w-full py-4">
+    <div className="flex flex-wrap items-center justify-between w-full gap-2 py-4">
       {steps.map((step, index) => {
         const stepNumber = index + 1;
         const isActive = currentStep === stepNumber;
